@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import entity.Player;
+import tile.TileManager;
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable, KeyListener {
@@ -18,12 +19,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Constants for the game panel dimensions and tile sizes
     public static final int originalTileSize = 16; // Original tile size (before scaling)
     public static final int scale = 3; // Scale factor for the tile size
+    
     public static final int tileSize = originalTileSize * scale; // Scaled tile size
     public static final int maxScreenCol = 16; // Maximum number of columns
     public static final int maxScreenRow = 12; // Maximum number of rows
     public static final int screenWidth = tileSize * maxScreenCol; // Total width of the game panel
     public static final int screenHeight = tileSize * maxScreenRow; // Total height of the game panel
+    
+    public static final int maxWorldCol = 50;
+    public static final int maxWorldRow = 50;
+    public static final int worldWidth = tileSize * maxWorldCol;
+    public static final int worldHeight = tileSize * maxWorldRow;
 
+    TileManager tileM = new TileManager(this);
+    
+    
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -38,6 +48,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start(); // Start the game thread
+        requestFocusInWindow(); //게임시작시 캐릭터 안나타나는 문제 해결 -240503 ㅅㅎㅇ
     }
 
     @Override
@@ -62,7 +73,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        
+        tileM.draw(g2);
         player.draw(g2); // Draw the player on the game panel
+        
+        g2.dispose();
     }
 
     @Override

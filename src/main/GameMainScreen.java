@@ -62,9 +62,9 @@ public class GameMainScreen extends JFrame {
             Music gameMusic = new Music("resources/music/ending.mp3", true);
             gameMusic.start();
             cardLayout.show(container, "StoryScreen");
-            storyScreen.startGameThread();  
-        });
+            storyScreen.startGameThread();
 
+        });
         buttonPanel.add(startButton, gbc);
 
         JButton settingsButton = createButton("설정");
