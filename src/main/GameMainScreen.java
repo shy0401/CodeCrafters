@@ -80,8 +80,9 @@ public class GameMainScreen extends JFrame {
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(0, 0, 0, 160));
+        button.setOpaque(true); // 버튼을 불투명하게 설정
+        button.setForeground(Color.yellow);
+        button.setBackground(new Color(0, 0, 0, 255)); // 메뉴 글씨 겹침오류 해결 - 0508 하윤
         button.setFocusPainted(false);
         button.setFont(new Font("나눔고딕", Font.BOLD, 24));
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2, true));
@@ -89,18 +90,19 @@ public class GameMainScreen extends JFrame {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                JButton sourceButton = (JButton) e.getSource(); // 이벤트를 발생시킨 버튼을 가져옵니다.
-                sourceButton.setBackground(new Color(0, 0, 0, 100)); // 이벤트 소스의 배경색을 변경합니다.
+                JButton sourceButton = (JButton) e.getSource();
+                sourceButton.setBackground(new Color(0, 0, 0, 255)); // 메뉴 글씨 겹침오류 해결 - 0508 하윤
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                JButton sourceButton = (JButton) e.getSource(); // 이벤트를 발생시킨 버튼을 가져옵니다.
-                sourceButton.setBackground(new Color(0, 0, 0, 160)); // 이벤트 소스의 배경색을 다시 설정합니다.
+                JButton sourceButton = (JButton) e.getSource();
+                sourceButton.setBackground(new Color(0, 0, 0, 255)); // 메뉴 글씨 겹침오류 해결 - 0508 하윤
             }
         });
         return button;
     }
+
 
 
     public static void main(String[] args) {
