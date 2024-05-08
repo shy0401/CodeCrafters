@@ -25,8 +25,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
+        x = 100;  // 초기 x 위치
+        y = 100;  // 초기 y 위치
         speed = 4;
         direction = "down";
         currentImage = down1;  // 초기 이미지 설정
@@ -68,14 +68,12 @@ public class Player extends Entity {
     }
 
     private void updateSprite() {
-        // 스프라이트 업데이트 로직
         spriteCounter++;
         if (spriteCounter > 12) {
             spriteNum = spriteNum == 1 ? 2 : 1;
             spriteCounter = 0;
         }
 
-        // 현재 방향에 따라 이미지 변경
         switch(direction) {
             case "up":
                 currentImage = (spriteNum == 1) ? up1 : up2;
@@ -93,11 +91,15 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(currentImage, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
-    }
-}
-/*
-    public void draw(Graphics2D g2) {
         g2.drawImage(currentImage, x, y, gp.tileSize, gp.tileSize, null);
     }
-} 일단 임시로 Tile을 전역변수로 설정함 -24.04.12. hayoun */ 
+
+    // Update getX and getY to return the player's current position
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+}

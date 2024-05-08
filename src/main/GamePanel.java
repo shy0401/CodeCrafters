@@ -41,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         this.setFocusable(true);
         this.addKeyListener(keyH); // Listen for key presses
 
-        player = new Player(this, keyH); // Initialize the player
+        setPlayer(new Player(this, keyH)); // Initialize the player
         this.requestFocusInWindow(); // Ensure the panel is focused to receive key events
     }
 
@@ -66,7 +66,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     private void updateGame() {
-        player.move(); // Move the player based on key inputs
+        getPlayer().move(); // Move the player based on key inputs
     }
 
     @Override
@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         Graphics2D g2 = (Graphics2D) g;
         
         tileM.draw(g2);
-        player.draw(g2); // Draw the player on the game panel
+        getPlayer().draw(g2); // Draw the player on the game panel
         
         g2.dispose();
     }
@@ -94,4 +94,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyReleased(KeyEvent e) {
         keyH.keyReleased(e); // Pass key released events to the key handler
     }
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 }
