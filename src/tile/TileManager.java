@@ -112,6 +112,4 @@ public class TileManager {
             }
         }
     }
-
-
 } // 클래스 끝

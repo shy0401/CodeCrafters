@@ -67,13 +67,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private void updateGame() {
         player.move(); // Move the player based on key inputs
-        updateCamera(player.getX(), player.getY());
+        updateCamera(player.getWorldX(), player.getWorldY());
     }
 
     private void updateCamera(int playerX, int playerY) {
-        cameraX = playerX - screenWidth / 2;
-        cameraY = playerY - screenHeight / 2;
-        // 카메라가 맵의 경계를 넘지 않도록 조정합니다.
+        int halfWidth = screenWidth / 2;
+        int halfHeight = screenHeight / 2;
+
+        cameraX = playerX - halfWidth;
+        cameraY = playerY - halfHeight;
+
+        // 카메라가 맵의 경계를 넘지 않도록 조정
         cameraX = Math.max(0, Math.min(cameraX, worldWidth - screenWidth));
         cameraY = Math.max(0, Math.min(cameraY, worldHeight - screenHeight));
     }
@@ -86,13 +90,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // 카메라 위치를 기준으로 타일 매니저와 플레이어를 그림
         tileM.draw(g2, cameraX, cameraY);
-        player.draw(g2, cameraX, cameraY);
+        player.draw(g2, cameraX + (screenWidth / 2 - tileSize / 2), cameraY + (screenHeight / 2 - tileSize / 2));
 
         g2.dispose();
     }
 
     @Override
-    public void keyTyped(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -124,13 +128,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         return maxWorldCol;
     }
 
-	public int getScreenWidth() {
+    public int getScreenWidth() {
+        return screenWidth;
+    }
 
-		return screenWidth;
-	}
-
-	public int getScreenHeight() {
-		// TODO Auto-generated method stub
-		return screenHeight;
-	}
+    public int getScreenHeight() {
+        return screenHeight;
+    }
 }

@@ -53,21 +53,49 @@ public class Player extends Entity {
     }
 
     public void move() {
+        int newWorldX = worldX;
+        int newWorldY = worldY;
+        boolean moved = false; // 움직임이 있는지 확인하는 플래그
+
         if (keyH.upPressed) {
-            worldY -= speed;
+            newWorldY -= speed;
             direction = "up";
-        } else if (keyH.downPressed) {
-            worldY += speed;
-            direction = "down";
-        } else if (keyH.leftPressed) {
-            worldX -= speed;
-            direction = "left";
-        } else if (keyH.rightPressed) {
-            worldX += speed;
-            direction = "right";
+            moved = true;
         }
-        updateSprite();
+        if (keyH.downPressed) {
+            newWorldY += speed;
+            direction = "down";
+            moved = true;
+        }
+        if (keyH.leftPressed) {
+            newWorldX -= speed;
+            direction = "left";
+            moved = true;
+        }
+        if (keyH.rightPressed) {
+            newWorldX += speed;
+            direction = "right";
+            moved = true;
+        }
+
+        // 경계 검사
+        if (newWorldX < 0 || newWorldX > gp.worldWidth - gp.tileSize) {
+            newWorldX = worldX;
+        }
+        if (newWorldY < 0 || newWorldY > gp.worldHeight - gp.tileSize) {
+            newWorldY = worldY;
+        }
+
+        // 실제 위치가 변경되었다면 업데이트
+        if (newWorldX != worldX || newWorldY != worldY) {
+            worldX = newWorldX;
+            worldY = newWorldY;
+            if (moved) {
+                updateSprite(); // 움직임이 있을 때만 스프라이트 업데이트
+            }
+        }
     }
+
 
     public int getWorldX() {
         return worldX;
