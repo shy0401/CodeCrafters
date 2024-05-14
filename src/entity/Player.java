@@ -8,7 +8,8 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class Player extends Entity {
-
+    private int worldX, worldY; // 플레이어의 월드 좌표
+    private int screenX, screenY; // 플레이어의 스크린 좌표
     GamePanel gp;
     KeyHandler keyH;
     BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
@@ -89,9 +90,24 @@ public class Player extends Entity {
                 break;
         }
     }
+    public int getWorldX() {
+        return worldX;
+    }
 
+    public int getWorldY() {
+        return worldY;
+    }
+
+    public int getScreenX() {
+        return screenX;
+    }
+
+    public int getScreenY() {
+        return screenY;
+    }
+    
     public void draw(Graphics2D g2) {
-        g2.drawImage(currentImage, x, y, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(currentImage, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
     }
 
     // Update getX and getY to return the player's current position

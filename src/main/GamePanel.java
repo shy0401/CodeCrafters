@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+
 import entity.Player;
 import tile.TileManager;
 
@@ -30,19 +32,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static final int maxWorldRow = 50;
     public static final int worldWidth = tileSize * maxWorldCol;
     public static final int worldHeight = tileSize * maxWorldRow;
+	public static final Object[] tiles = null;
 
     TileManager tileM = new TileManager(this);
     
     
     public GamePanel() {
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.BLACK);
-        this.setDoubleBuffered(true);
-        this.setFocusable(true);
-        this.addKeyListener(keyH); // Listen for key presses
-
-        setPlayer(new Player(this, keyH)); // Initialize the player
-        this.requestFocusInWindow(); // Ensure the panel is focused to receive key events
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
+        setBackground(Color.BLACK);
+        setDoubleBuffered(true);
+        setFocusable(true);
+        addKeyListener(keyH);
+        player = new Player(this, keyH);
+        tileM = new TileManager(this);
     }
 
     public void startGameThread() {
@@ -54,11 +56,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void run() {
         while (gameThread != null) {
-            updateGame(); // Update game logic
-            repaint(); // Redraw the game panel
-
+            updateGame();
+            repaint();
             try {
-                Thread.sleep(10); // Sleep to cap frame rate
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -84,12 +85,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyTyped(KeyEvent e) {
         // This method is not used, but must be implemented because of the KeyListener interface
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
         keyH.keyPressed(e); // Pass key pressed events to the key handler
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         keyH.keyReleased(e); // Pass key released events to the key handler
@@ -98,8 +97,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public Player getPlayer() {
 		return player;
 	}
+    public void setPlayer(Player player) { this.player = player; }
 
-	public void setPlayer(Player player) {
-		this.player = player;
+    public int getTileSize() { return tileSize; }
+    
+	public BufferedImage getTileImage(int tileNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getMaxWorldRow() {
+		// TODO Auto-generated method stub
+		return maxWorldRow;
+	}
+
+	public int getMaxWorldCol() {
+		// TODO Auto-generated method stub
+		return maxWorldCol;
 	}
 }

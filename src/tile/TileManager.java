@@ -9,43 +9,48 @@ import java.io.IOException; // java.io.IOException을 가져오기;
 import java.io.InputStream; // java.io.InputStream을 가져오기;
 import java.io.InputStreamReader; // java.io.InputStreamReader을 가져오기;
 
-public class TileManager { // 공개 클래스 타일매니저 {
-    private Tile[] tiles; // private 타일 배열 tiles;
-    private int[][] mapData; // private int 이차원 배열 mapData;
-    private GamePanel gp; // private GamePanel gp;
+public class TileManager {
+    private Tile[] tiles; // 타일 배열
+    private int[][] mapData;
+    private GamePanel gp;
 
-    public TileManager(GamePanel gp) { // 공개 TileManager 생성자(GamePanel gp) {
-        this.gp = gp; // this.gp = gp;
-        tiles = new Tile[10]; // 타일 배열을 10으로 초기화;
-        mapData = new int[gp.maxWorldCol][gp.maxWorldRow]; // mapData를 gp.maxWorldCol, gp.maxWorldRow 크기의 배열로 초기화;
-        
-        loadTileImages(); // 타일 이미지를 불러오는 메소드 호출;
+    public TileManager(GamePanel gp) {
+        this.gp = gp;
+        tiles = new Tile[10];
+        mapData = new int[gp.maxWorldCol][gp.maxWorldRow];
+        loadTileImages();
         try {
-            loadMapData("/maps/world01.txt"); // "/maps/world01.txt"에서 맵 데이터를 불러오려고 시도;
+            loadMapData("/maps/world01.txt");
         } catch (IOException e) {
-            System.err.println("Error loading map data: " + e.getMessage()); // 맵 데이터 로딩 오류 메시지 출력;
-            loadDefaultMap(); // 기본 맵 데이터를 불러오는 메소드 호출;
+            System.err.println("Error loading map data: " + e.getMessage());
+            loadDefaultMap();
         }
     }
 
-    private void loadTileImages() { // private 타일 이미지를 불러오는 메소드 {
+    // 이미지 반환 메서드 추가
+    public BufferedImage getTileImage(int index) {
+        if (index < tiles.length && tiles[index] != null) {
+            return tiles[index].image;
+        } else {
+            return null;
+        }
+    }
+
+    private void loadTileImages() {
         try {
-            tiles[0] = new Tile(loadImage("/tiles/grass00.png"), false); // 0번 인덱스 타일에 grass00.png 이미지를 불러와 설정;
-            tiles[1] = new Tile(loadImage("/tiles/wall.png"), true); // 1번 인덱스 타일에 wall.png 이미지를 불러와 설정;
-            tiles[2] = new Tile(loadImage("/tiles/water00.png"), false); // 2번 인덱스 타일에 water00.png 이미지를 불러와 설정;
-            tiles[3] = new Tile(loadImage("/tiles/earth.png"), false); // 3번 인덱스 타일에 earth.png 이미지를 불러와 설정;
-            tiles[4] = new Tile(loadImage("/tiles/grass01.png"), false); // 4번 인덱스 타일에 grass01.png 이미지를 불러와 설정;
-            tiles[5] = new Tile(loadImage("/tiles/tree.png"), true); // 5번 인덱스 타일에 tree.png 이미지를 불러와 설정;
-            // 여기에 더 많은 타일을 추가할 수 있음
-        } catch (Exception e) {
-            System.err.println("Error loading tile images: " + e.getMessage()); // 타일 이미지 로딩 오류 메시지 출력;
-            e.printStackTrace(); // 오류 스택 추적 출력;
+            tiles[0] = new Tile(loadImage("/tiles/grass00.png"), false);
+            tiles[1] = new Tile(loadImage("/tiles/wall.png"), true);
+            // 추가 타일 로드
+        } catch (IOException e) {
+            System.err.println("Error loading tile images: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private BufferedImage loadImage(String path) throws IOException { // private 이미지를 불러오는 메소드;
-        return ImageIO.read(getClass().getResourceAsStream(path)); // 지정된 경로에서 이미지를 읽어서 반환;
+    private BufferedImage loadImage(String path) throws IOException {
+        return ImageIO.read(getClass().getResourceAsStream(path));
     }
+
 
     private void loadMapData(String path) throws IOException { // private 맵 데이터를 불러오는 메소드;
         InputStream is = getClass().getResourceAsStream(path); // 지정된 경로에서 입력 스트림을 가져옴;
@@ -74,24 +79,26 @@ public class TileManager { // 공개 클래스 타일매니저 {
         }
     }
 
-    public void draw(Graphics2D g2) { // 공개 그리기 메소드(Graphics2D g2);
-        int worldCol = 0;
-        int worldRow = 0;
-        
-        while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
-            int tileNum = mapData[worldCol][worldRow];
-            int worldX = worldCol * gp.tileSize;
-            int worldY = worldRow * gp.tileSize;
-            int screenX = worldX - gp.player.worldX + gp.player.screenX;
-            int screenY = worldY - gp.player.worldY + gp.player.screenY;
+    public void draw(Graphics2D g2) {
+        for (int row = 0; row < gp.getMaxWorldRow(); row++) {
+            for (int col = 0; col < gp.getMaxWorldCol(); col++) {
+                int tileNum = mapData[row][col];
 
-            g2.drawImage(tiles[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-            
-            worldCol++;
-            if (worldCol == gp.maxWorldCol) {
-                worldCol = 0;
-                worldRow++;
+                // null 체크 추가
+                if (tileNum < 0 || tileNum >= tiles.length || tiles[tileNum] == null) {
+                    continue;  // 타일 정보가 없으면 다음 타일로 넘어감
+                }
+
+                BufferedImage tileImage = tiles[tileNum].image;
+                if (tileImage != null) {
+                    int worldX = col * gp.getTileSize();
+                    int worldY = row * gp.getTileSize();
+                    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
+                    int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+                    g2.drawImage(tileImage, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+                }
             }
         }
     }
+
 } // 클래스 끝
