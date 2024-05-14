@@ -8,7 +8,8 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class Player extends Entity {
-    private int worldX, worldY; // 플레이어의 월드 좌표
+    public int worldX; // 플레이어의 월드 좌표
+    public int worldY;
     private int screenX, screenY; // 플레이어의 스크린 좌표
     GamePanel gp;
     KeyHandler keyH;
@@ -26,11 +27,14 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        x = 100;  // 초기 x 위치
-        y = 100;  // 초기 y 위치
+        worldX = gp.worldWidth / 2 - gp.tileSize / 2;  // 맵 중앙에서 시작
+        worldY = gp.worldHeight / 2 - gp.tileSize / 2;
         speed = 4;
         direction = "down";
-        currentImage = down1;  // 초기 이미지 설정
+        getPlayerImage();
+        currentImage = down1;
+        screenX = gp.screenWidth / 2 - gp.tileSize / 2; // 스크린 상 중앙 위치
+        screenY = gp.screenHeight / 2 - gp.tileSize / 2;
     }
 
     public void getPlayerImage() {
@@ -50,46 +54,21 @@ public class Player extends Entity {
 
     public void move() {
         if (keyH.upPressed) {
-            y -= speed;
+            worldY -= speed;
             direction = "up";
-            updateSprite();
         } else if (keyH.downPressed) {
-            y += speed;
+            worldY += speed;
             direction = "down";
-            updateSprite();
         } else if (keyH.leftPressed) {
-            x -= speed;
+            worldX -= speed;
             direction = "left";
-            updateSprite();
         } else if (keyH.rightPressed) {
-            x += speed;
+            worldX += speed;
             direction = "right";
-            updateSprite();
         }
+        updateSprite();
     }
 
-    private void updateSprite() {
-        spriteCounter++;
-        if (spriteCounter > 12) {
-            spriteNum = spriteNum == 1 ? 2 : 1;
-            spriteCounter = 0;
-        }
-
-        switch(direction) {
-            case "up":
-                currentImage = (spriteNum == 1) ? up1 : up2;
-                break;
-            case "down":
-                currentImage = (spriteNum == 1) ? down1 : down2;
-                break;
-            case "left":
-                currentImage = (spriteNum == 1) ? left1 : left2;
-                break;
-            case "right":
-                currentImage = (spriteNum == 1) ? right1 : right2;
-                break;
-        }
-    }
     public int getWorldX() {
         return worldX;
     }
@@ -106,8 +85,32 @@ public class Player extends Entity {
         return screenY;
     }
     
-    public void draw(Graphics2D g2) {
-        g2.drawImage(currentImage, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
+    // 좌표를 기반으로 이미지를 업데이트합니다.
+    private void updateSprite() {
+        spriteCounter++;
+        if (spriteCounter > 12) {
+            spriteNum = spriteNum == 1 ? 2 : 1;
+            spriteCounter = 0;
+        }
+        switch(direction) {
+            case "up":
+                currentImage = (spriteNum == 1) ? up1 : up2;
+                break;
+            case "down":
+                currentImage = (spriteNum == 1) ? down1 : down2;
+                break;
+            case "left":
+                currentImage = (spriteNum == 1) ? left1 : left2;
+                break;
+            case "right":
+                currentImage = (spriteNum == 1) ? right1 : right2;
+                break;
+        }
+    }
+
+    public void draw(Graphics2D g2, int cameraX, int cameraY) {
+        // 화면에 이미지를 그립니다.
+        g2.drawImage(currentImage, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 
     // Update getX and getY to return the player's current position

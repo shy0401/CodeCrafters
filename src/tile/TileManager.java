@@ -20,7 +20,7 @@ public class TileManager {
         mapData = new int[gp.maxWorldCol][gp.maxWorldRow];
         loadTileImages();
         try {
-            loadMapData("/maps/world01.txt");
+            loadMapData("/maps/world02.txt");
         } catch (IOException e) {
             System.err.println("Error loading map data: " + e.getMessage());
             loadDefaultMap();
@@ -40,6 +40,10 @@ public class TileManager {
         try {
             tiles[0] = new Tile(loadImage("/tiles/grass00.png"), false);
             tiles[1] = new Tile(loadImage("/tiles/wall.png"), true);
+            tiles[2] = new Tile(loadImage("/tiles/wall.png"), true);
+            tiles[3] = new Tile(loadImage("/tiles/floor01.png"), true);
+            tiles[4] = new Tile(loadImage("/tiles/tree.png"), true);
+            tiles[5] = new Tile(loadImage("/tiles/earth.png"), true);
             // 추가 타일 로드
         } catch (IOException e) {
             System.err.println("Error loading tile images: " + e.getMessage());
@@ -79,26 +83,35 @@ public class TileManager {
         }
     }
 
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int cameraX, int cameraY) {
+        int playerX = gp.getPlayer().getWorldX();
+        int playerY = gp.getPlayer().getWorldY();
+        int tileSize = gp.getTileSize();
+
+        int screenX = gp.getScreenWidth() / 2 - tileSize / 2; // 화면 가운데 플레이어 위치
+        int screenY = gp.getScreenHeight() / 2 - tileSize / 2;
+
         for (int row = 0; row < gp.getMaxWorldRow(); row++) {
             for (int col = 0; col < gp.getMaxWorldCol(); col++) {
                 int tileNum = mapData[row][col];
 
-                // null 체크 추가
                 if (tileNum < 0 || tileNum >= tiles.length || tiles[tileNum] == null) {
                     continue;  // 타일 정보가 없으면 다음 타일로 넘어감
                 }
 
                 BufferedImage tileImage = tiles[tileNum].image;
                 if (tileImage != null) {
-                    int worldX = col * gp.getTileSize();
-                    int worldY = row * gp.getTileSize();
-                    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
-                    int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
-                    g2.drawImage(tileImage, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+                    int worldX = col * tileSize;
+                    int worldY = row * tileSize;
+
+                    int finalX = worldX - playerX + screenX;
+                    int finalY = worldY - playerY + screenY;
+
+                    g2.drawImage(tileImage, finalX, finalY, tileSize, tileSize, null);
                 }
             }
         }
     }
+
 
 } // 클래스 끝
