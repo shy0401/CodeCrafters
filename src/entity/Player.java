@@ -33,6 +33,7 @@ public class Player extends Entity {
         solidArea.width = 32;
         solidArea.height = 32;
         
+        direction = "down"; //default 방향을 아래로
         setDefaultValues();
         getPlayerImage();
     }
@@ -125,12 +126,24 @@ public class Player extends Entity {
     
     // 좌표를 기반으로 이미지를 업데이트합니다.
     private void updateSprite() {
-        spriteCounter++;
+        
         collisionOn = false;
         gp.cChecker.checkTile(this);
         
-        if (spriteCounter > 12 && collisionOn == false ) {
-            spriteNum = spriteNum == 1 ? 2 : 1;
+        if(collisionOn == false) {
+        	
+        	switch(direction) {
+        	case "up": worldY -= speed; break;
+        	case "down": worldY += speed; break;
+        	case "left": worldX -= speed; break;
+        	case "right": worldX += speed; break;
+        	}
+        }
+        spriteCounter++;
+        
+        
+        if (spriteCounter > 12 && spriteNum == 1) {
+            spriteNum = 2;
             spriteCounter = 0;
         }
         switch(direction) {
@@ -139,7 +152,7 @@ public class Player extends Entity {
                 break;
             case "down":
                 currentImage = (spriteNum == 1) ? down1 : down2;
-                break;
+                break;  
             case "left":
                 currentImage = (spriteNum == 1) ? left1 : left2;
                 break;

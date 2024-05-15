@@ -4,6 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import main.GamePanel;
+import main.CollisionChecker;
+
 public class Entity {
     public int x, y;
     public int speed;
@@ -11,7 +14,7 @@ public class Entity {
     public String direction;
     public Rectangle solidArea;
     public boolean collisionOn = false;
-
+    
     // Sprite animation counters
     public int spriteCounter = 0;
     public int spriteNum = 1;
@@ -21,4 +24,19 @@ public class Entity {
     // Update and Draw methods should be overridden in subclasses
     public void update() {}
     public void draw(Graphics2D g2) {}
+    
+    public void move(GamePanel gp) {
+        if (((CollisionChecker) gp.collisionChecker).canMove(x, y, speed, direction)) {
+            switch (direction) {
+                case "up": y -= speed; break;
+                case "down": y += speed; break;
+                case "left": x -= speed; break;
+                case "right": x += speed; break;
+            }
+        }
+    }
+
+
 }
+
+

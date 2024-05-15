@@ -8,7 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import entity.NPC1;
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 @SuppressWarnings("serial")
@@ -37,6 +39,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     
     public CollisionChecker cChecker = new CollisionChecker(this);
     TileManager tileM;
+	public SuperObject[] objects;
+	public NPC1[] npcs;
+	public Object collisionChecker;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -44,8 +49,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setDoubleBuffered(true);
         setFocusable(true);
         addKeyListener(keyH);
-        player = new Player(this, keyH);
+        
+        //게임패널 순서 변경 0516 04:08 - 하윤
         tileM = new TileManager(this);
+        player = new Player(this, keyH);
+        cChecker = new CollisionChecker(this);
+        startGameThread();
     }
 
     public void startGameThread() {
@@ -57,8 +66,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void run() {
         while (gameThread != null) {
-            updateGame();
             repaint();
+            updateGame();
+
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -86,10 +96,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-
+        
+        long drawStart = 0;
+        if(keyH.checkDrawTime = true) {
+        	drawStart = System.nanoTime();
+        }
+        
         // 카메라 위치를 기준으로 타일 매니저와 플레이어를 그림
         tileM.draw(g2, cameraX, cameraY);
         player.draw(g2, cameraX + (screenWidth / 2 - tileSize / 2), cameraY + (screenHeight / 2 - tileSize / 2));
