@@ -3,6 +3,7 @@ package entity;
 import main.GamePanel;
 import main.KeyHandler;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -22,6 +23,16 @@ public class Player extends Entity {
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
         this.keyH = keyH;
+        
+        screenX = gp.screenWidth / 2 - gp.tileSize / 2; // 스크린 상 중앙 위치
+        screenY = gp.screenHeight / 2 - gp.tileSize / 2;
+        
+        solidArea = new Rectangle();
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.width = 32;
+        solidArea.height = 32;
+        
         setDefaultValues();
         getPlayerImage();
     }
@@ -33,8 +44,6 @@ public class Player extends Entity {
         direction = "down";
         getPlayerImage();
         currentImage = down1;
-        screenX = gp.screenWidth / 2 - gp.tileSize / 2; // 스크린 상 중앙 위치
-        screenY = gp.screenHeight / 2 - gp.tileSize / 2;
     }
 
     public void getPlayerImage() {
@@ -77,7 +86,8 @@ public class Player extends Entity {
             direction = "right";
             moved = true;
         }
-
+       
+        
         // 경계 검사
         if (newWorldX < 0 || newWorldX > gp.worldWidth - gp.tileSize) {
             newWorldX = worldX;
@@ -116,7 +126,10 @@ public class Player extends Entity {
     // 좌표를 기반으로 이미지를 업데이트합니다.
     private void updateSprite() {
         spriteCounter++;
-        if (spriteCounter > 12) {
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+        
+        if (spriteCounter > 12 && collisionOn == false ) {
             spriteNum = spriteNum == 1 ? 2 : 1;
             spriteCounter = 0;
         }
@@ -134,6 +147,7 @@ public class Player extends Entity {
                 currentImage = (spriteNum == 1) ? right1 : right2;
                 break;
         }
+        
     }
 
     public void draw(Graphics2D g2, int cameraX, int cameraY) {

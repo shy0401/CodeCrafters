@@ -34,7 +34,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private int cameraX, cameraY; // 카메라의 x, y 위치를 저장할 변수
 
-    private TileManager tileM;
+    
+    public CollisionChecker cChecker = new CollisionChecker(this);
+    TileManager tileM;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));

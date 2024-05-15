@@ -10,7 +10,8 @@ import java.io.InputStream; // java.io.InputStream을 가져오기;
 import java.io.InputStreamReader; // java.io.InputStreamReader을 가져오기;
 
 public class TileManager {
-    private Tile[] tiles; // 타일 배열
+    public int mapTileNum[][];
+	public Tile[] tiles; // 타일 배열
     private int[][] mapData;
     private GamePanel gp;
 
@@ -41,9 +42,9 @@ public class TileManager {
             tiles[0] = new Tile(loadImage("/tiles/grass00.png"), false);
             tiles[1] = new Tile(loadImage("/tiles/wall.png"), true);
             tiles[2] = new Tile(loadImage("/tiles/wall.png"), true);
-            tiles[3] = new Tile(loadImage("/tiles/floor01.png"), true);
+            tiles[3] = new Tile(loadImage("/tiles/floor01.png"), false);
             tiles[4] = new Tile(loadImage("/tiles/tree.png"), true);
-            tiles[5] = new Tile(loadImage("/tiles/earth.png"), true);
+            tiles[5] = new Tile(loadImage("/tiles/earth.png"), false);
             // 추가 타일 로드
         } catch (IOException e) {
             System.err.println("Error loading tile images: " + e.getMessage());
