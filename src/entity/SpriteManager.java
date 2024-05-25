@@ -2,7 +2,6 @@ package entity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class SpriteManager {
     private Map<String, BufferedImage> imageMap = new HashMap<>();
 
     public SpriteManager(String filePath, int characterRow) throws IOException {
-        BufferedImage spriteSheet = ImageIO.read(new File(filePath));
+        BufferedImage spriteSheet = ImageIO.read(getClass().getClassLoader().getResource(filePath));
 
         int count = 1;
         for (int i = 0; i < heightNum; i++) {

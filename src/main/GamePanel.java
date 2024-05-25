@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 import entity.NPC1;
 import entity.Player;
@@ -20,28 +21,25 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private KeyHandler keyH = new KeyHandler();
 
     // Constants for the game panel dimensions and tile sizes
-    public static final int originalTileSize = 16; // Original tile size (before scaling)
-    public static final int scale = 3; // Scale factor for the tile size
-
-    public static final int tileSize = originalTileSize * scale; // Scaled tile size
-    public static final int maxScreenCol = 16; // Maximum number of columns
-    public static final int maxScreenRow = 12; // Maximum number of rows
-    public static final int screenWidth = tileSize * maxScreenCol; // Total width of the game panel
-    public static final int screenHeight = tileSize * maxScreenRow; // Total height of the game panel
+    public static final int originalTileSize = 16;
+    public static final int scale = 3;
+    public static final int tileSize = originalTileSize * scale;
+    public static final int maxScreenCol = 16;
+    public static final int maxScreenRow = 12;
+    public static final int screenWidth = tileSize * maxScreenCol;
+    public static final int screenHeight = tileSize * maxScreenRow;
 
     public static final int maxWorldCol = 50;
     public static final int maxWorldRow = 50;
     public static final int worldWidth = tileSize * maxWorldCol;
     public static final int worldHeight = tileSize * maxWorldRow;
 
-    private int cameraX, cameraY; // 카메라의 x, y 위치를 저장할 변수
+    private int cameraX, cameraY;
 
-    
-    public CollisionChecker cChecker = new CollisionChecker(this);
+    public CollisionChecker cChecker;
     TileManager tileM;
-	public SuperObject[] objects;
-	public NPC1[] npcs;
-	public Object collisionChecker;
+    public SuperObject[] objects;
+    public NPC1[] npcs;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -49,25 +47,33 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setDoubleBuffered(true);
         setFocusable(true);
         addKeyListener(keyH);
-        
-        //게임패널 순서 변경 0516 04:08 - 하윤
+
+        // Initialize game components
         tileM = new TileManager(this);
-        player = new Player(this, keyH);
         cChecker = new CollisionChecker(this);
+        player = new Player(this, keyH);
+
+        // Load player images
+        try {
+            player.setPlayerImage("player/Actor1.png", 1);  // Use the correct path
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         startGameThread();
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
-        requestFocusInWindow(); // 게임 시작 시 캐릭터가 화면에 나타나도록 함
+        requestFocusInWindow();
     }
 
     @Override
     public void run() {
         while (gameThread != null) {
-            repaint();
             updateGame();
+            repaint();
 
             try {
                 Thread.sleep(10);
@@ -78,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     private void updateGame() {
-        player.move(); // Move the player based on key inputs
+        player.move(this);
         updateCamera(player.getWorldX(), player.getWorldY());
     }
 
@@ -89,25 +95,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         cameraX = playerX - halfWidth;
         cameraY = playerY - halfHeight;
 
-        // 카메라가 맵의 경계를 넘지 않도록 조정
         cameraX = Math.max(0, Math.min(cameraX, worldWidth - screenWidth));
         cameraY = Math.max(0, Math.min(cameraY, worldHeight - screenHeight));
     }
-
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        
+
         long drawStart = 0;
-        if(keyH.checkDrawTime = true) {
-        	drawStart = System.nanoTime();
+        if (keyH.checkDrawTime) {
+            drawStart = System.nanoTime();
         }
-        
-        // 카메라 위치를 기준으로 타일 매니저와 플레이어를 그림
+
         tileM.draw(g2, cameraX, cameraY);
-        player.draw(g2, cameraX + (screenWidth / 2 - tileSize / 2), cameraY + (screenHeight / 2 - tileSize / 2));
+        player.draw(g2);
 
         g2.dispose();
     }
